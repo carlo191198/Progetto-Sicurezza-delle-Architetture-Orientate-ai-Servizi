@@ -1,4 +1,4 @@
-# Progetto-Sicurezza-delle-Architetture-Orientate-ai-Servizi
+# Progetto Sicurezza delle Architetture Orientate ai Servizi
 Questo progetto implementa un sistema di monitoraggio degli accessi basato su OAuth2 e Keycloak in grado di rilevare tentativi di brute force e attacchi contro account utente.
 **TECNOLOGIE UTILIZZATE:**
 - Python
