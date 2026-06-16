@@ -7,7 +7,7 @@ Questo progetto implementa un sistema di monitoraggio degli accessi basato su OA
 - Keycloak
 - JWT
 - Docker
-- 
+  
 **DIPENDENZE:**
 - In questo progetto sono state utilizzate le librerie standard Python, pertanto le uniche dipendenze presenti sono:
 - Python (una versione uguale o superiore alla 3.10); 
