@@ -7,12 +7,12 @@ In particolare, il sistema simula diversi scenari di autenticazione (legittimi e
 
 **2- PASSI PER L'INSTALLAZIONE:**
 
-**1-** Prima di eseguire il progetto è necessario aver installato Python e Docker Desktop.
+- Prima di eseguire il progetto è necessario aver installato Python e Docker Desktop.
 
-**2-** All'interno della cartella del progetto è presente il file: "docker-compose.yml".
+- All'interno della cartella del progetto è presente il file: "docker-compose.yml".
 Per avviare Keycloak eseguire nel terminale il comando: "docker compose up -d" e successivamente, cercare su un browser qualsiasi l'indirizzo "http://localhost:8080". 
 
-***3-** In questo momento bisogna configurare Keycloak, pertanto bisogna accedere alla Administration Console con le credenziali configurate nel Docker, ovvero: 
+- In questo momento bisogna configurare Keycloak, pertanto bisogna accedere alla Administration Console con le credenziali configurate nel Docker, ovvero: 
 Username: admin / Password: admin .
 Dopodiché bisogna creare il Realm denominato "security-demo". Successivamente occore configurare un Client OAuth2 chiamato "python-client", abilitando le opzioni "Client Authentication" e "Direct Access Grants", le quali risultano essere necessarie per consentire all'app di Python di effettuare richieste di autenticazione verso il server. 
 Una volta terminata la configurazione del client, bisogna creare un utente di test (testuser) ed assegnarli una password permanente, che verrà utilizzata durante le simulazioni delle autenticazioni (nel mio caso username: testuser, password: password123).
@@ -32,11 +32,11 @@ Inoltre, sono state utilizzate esclusivamente librerie Python standard, quindi n
 
 **4- ARCHITETTURA:**
 L'architettura del mio progetto è composta essenzialmente da due componenti principali:
-1- Keycloak: Keycloak svolge il ruolo di Authorization Server ed Identity Provider, pertanto le sue funzioni principali sono: 
+**1- Keycloak:** Keycloak svolge il ruolo di Authorization Server ed Identity Provider, pertanto le sue funzioni principali sono: 
 - Gestione degli utenti;
 - Verifica delle credenziali;
 - Generazione dei token JWT.
-2- Python: Tramite un editor di codice sorgente (Visual Studio Code), con Python mi è stato possibile: 
+**2- Python:** Tramite un editor di codice sorgente (Visual Studio Code), con Python mi è stato possibile: 
 - Inviare richieste di autenticazione a Keycloak tramite OAuth2;
 - Registrare tutti i tentativi di accesso;
 - Distinguere le autenticazioni effettuate con successo da quelle fallite;
