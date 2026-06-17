@@ -1,6 +1,7 @@
 # Progetto Sicurezza delle Architetture Orientate ai Servizi
 
 **DESCRIZIONE DEL PROGETTO:**
+
 Questo progetto implementa un sistema di monitoraggio degli accessi basato su OAuth2 e Keycloak in grado di rilevare automaticamente possibili comportamenti sospetti. 
 In particolare, il sistema simula diversi scenari di autenticazione (legittimi e malevoli), e genera notifiche quando vengono rilevati comportamenti sospetti riconducibili ad attacchi di tipo brute force o tentativi di accesso ripetuti non autorizzati.
 
