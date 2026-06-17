@@ -17,7 +17,7 @@ Per avviare Keycloak eseguire nel terminale il comando: "docker compose up -d" e
 Username: admin / Password: admin .
 Dopodiché bisogna creare il Realm denominato "security-demo". Successivamente occore configurare un Client OAuth2 chiamato "python-client", abilitando le opzioni "Client Authentication" e "Direct Access Grants", le quali risultano essere necessarie per consentire all'app di Python di effettuare richieste di autenticazione verso il server. 
 Una volta terminata la configurazione del client, bisogna creare un utente di test (testuser) ed assegnarli una password permanente, che verrà utilizzata durante le simulazioni delle autenticazioni (nel mio caso username: testuser, password: password123).
-Importante sottolinare che il valore presente nella voce "Client Secret" (generato da Keycloak) deve essere copiato all'interno del file "main.py", sostituendo il valore della costante "CLIENT_SECRET". 
+Il valore presente nella voce "Client Secret" (generato da Keycloak) deve essere copiato all'interno del file "main.py", sostituendo il valore della costante "CLIENT_SECRET". 
 
 **4-** Una volta completate tutte le operazioni indicate precedentemente, è possibile eseguire il progetto direttamente su un editor di codice sorgente (Visual Studio Code nel mio caso).
   
