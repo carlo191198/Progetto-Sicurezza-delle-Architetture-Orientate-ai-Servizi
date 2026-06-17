@@ -32,10 +32,12 @@ Inoltre, sono state utilizzate esclusivamente librerie Python standard, quindi n
 
 **4- ARCHITETTURA:**
 L'architettura del mio progetto è composta essenzialmente da due componenti principali:
+
 **1- Keycloak:** Keycloak svolge il ruolo di Authorization Server ed Identity Provider, pertanto le sue funzioni principali sono: 
 - Gestione degli utenti;
 - Verifica delle credenziali;
 - Generazione dei token JWT.
+
 **2- Python:** Tramite un editor di codice sorgente (Visual Studio Code), con Python mi è stato possibile: 
 - Inviare richieste di autenticazione a Keycloak tramite OAuth2;
 - Registrare tutti i tentativi di accesso;
