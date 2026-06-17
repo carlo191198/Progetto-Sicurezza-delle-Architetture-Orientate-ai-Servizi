@@ -1,11 +1,11 @@
 # Progetto Sicurezza delle Architetture Orientate ai Servizi
 
-**DESCRIZIONE DEL PROGETTO:**
+**1- DESCRIZIONE DEL PROGETTO:**
 
 Questo progetto implementa un sistema di monitoraggio degli accessi basato su OAuth2 e Keycloak in grado di rilevare automaticamente possibili comportamenti sospetti. 
 In particolare, il sistema simula diversi scenari di autenticazione (legittimi e malevoli), e genera notifiche quando vengono rilevati comportamenti sospetti riconducibili ad attacchi di tipo brute force o tentativi di accesso ripetuti non autorizzati.
 
-**PASSI PER L'INSTALLAZIONE:**
+**2- PASSI PER L'INSTALLAZIONE:**
 
 **1-** Prima di eseguire il progetto è necessario aver installato Python e Docker Desktop.
 
@@ -19,16 +19,39 @@ Una volta terminata la configurazione del client, bisogna creare un utente di te
 Importante sottolinare che il valore presente nella voce "Client Secret" (generato da Keycloak) deve essere copiato all'interno del file "main.py", sostituendo il valore della costante "CLIENT_SECRET". 
 
 **4-** Una volta completate tutte le operazioni indicate precedentemente, è possibile eseguire il progetto direttamente su un editor di codice sorgente (Visual Studio Code nel mio caso).
-
-**TECNOLOGIE UTILIZZATE:**
-- Python
-- OAuth2
-- Keycloak
-- JWT
-- Docker
   
-**DIPENDENZE:**
-- In questo progetto sono state utilizzate le librerie standard Python, pertanto le uniche dipendenze presenti sono:
-- Python (una versione uguale o superiore alla 3.10); 
+**3- DIPENDENZE:**
+In questo progetto sono state utilizzate le seguenti tecnologie:
+- Python (una versione uguale o superiore alla 3, nel mio caso 3.10); 
 - Docker Desktop;
-- Keycloak 23. 
+- Keycloak;
+- OAuth2;
+- JWT (JSON Web Token).
+
+Inoltre, sono state utilizzate esclusivamente librerie Python standard, quindi non è necessario installare ulteriori pacchetti aggiuntivi tramite pip. 
+
+**4- ARCHITETTURA:**
+L'architettura del mio progetto è composta essenzialmente da due componenti principali:
+1- Keycloak: Keycloak svolge il ruolo di Authorization Server ed Identity Provider, pertanto le sue funzioni principali sono: 
+- Gestione degli utenti;
+- Verifica delle credenziali;
+- Generazione dei token JWT.
+2- Python: Tramite un editor di codice sorgente (Visual Studio Code), con Python mi è stato possibile: 
+- Inviare richieste di autenticazione a Keycloak tramite OAuth2;
+- Registrare tutti i tentativi di accesso;
+- Distinguere le autenticazioni effettuate con successo da quelle fallite;
+- Generare alert in presenza di attività sospette.
+
+**5- TEST DI SICUREZZA:** 
+Per verificare il corretto svolgimento e funzionamento del sistema, sono stati simulati ed eseguiti tre scenari differenti: 
+**Test 1 - Autenticazione Valida:** È stato effettuato un login utilizzando le credenziali corrette. 
+- Risultato atteso: Autenticazione riuscita e ricezione di un token JWT.
+- Esito del test: Superato.
+
+**Test 2 - Attacco Brute Force:** Sono stati simulati diversi tentativi di autenticazione falliti provenienti dallo stesso indirizzo IP.
+- Risultato atteso: Rilevamento automatico dell'attacco e generazione di un alert di sicurezza.
+- Esito del test: Superato.
+
+**Test 3 - Attacco ad un Account:** Sono stati simulati più tentativi di autenticazione falliti verso lo stesso utente utilizzando password differenti.
+- Risultato atteso: Identificazione del comportamento anomalo e generazione di un alert.
+- Esito del test: Superato.
