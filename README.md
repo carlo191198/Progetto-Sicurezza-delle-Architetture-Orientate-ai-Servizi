@@ -10,7 +10,8 @@ In particolare, il sistema simula diversi scenari di autenticazione (legittimi e
 - Prima di eseguire il progetto è necessario aver installato Python e Docker Desktop.
 
 - All'interno della cartella del progetto è presente il file: "docker-compose.yml".
-Per avviare Keycloak eseguire nel terminale il comando: "docker compose up -d" e successivamente, cercare su un browser qualsiasi l'indirizzo "http://localhost:8080". 
+Per avviare Keycloak eseguire nel terminale il comando: "docker compose up -d" e successivamente, cercare su un browser qualsiasi l'indirizzo
+"http://localhost:8080". 
 
 - In questo momento bisogna configurare Keycloak, pertanto bisogna accedere alla Administration Console con le credenziali configurate nel Docker, ovvero: 
 Username: admin / Password: admin .
