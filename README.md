@@ -47,14 +47,14 @@ L'architettura del mio progetto è composta essenzialmente da due componenti pri
 **5- TEST DI SICUREZZA:** 
 Per verificare il corretto svolgimento e funzionamento del sistema, sono stati simulati ed eseguiti tre scenari differenti: 
 
-**Test 1 - Autenticazione Valida:** È stato effettuato un login utilizzando le credenziali corrette. 
+**-Test 1 - Autenticazione Valida:** È stato effettuato un login utilizzando le credenziali corrette. 
 - Risultato atteso: Autenticazione riuscita e ricezione di un token JWT.
 - Esito del test: Superato.
 
-**Test 2 - Attacco Brute Force:** Sono stati simulati diversi tentativi di autenticazione falliti provenienti dallo stesso indirizzo IP.
+**-Test 2 - Attacco Brute Force:** Sono stati simulati diversi tentativi di autenticazione falliti provenienti dallo stesso indirizzo IP.
 - Risultato atteso: Rilevamento automatico dell'attacco e generazione di un alert di sicurezza.
 - Esito del test: Superato.
 
-**Test 3 - Attacco ad un Account:** Sono stati simulati più tentativi di autenticazione falliti verso lo stesso utente utilizzando password differenti.
+**-Test 3 - Attacco ad un Account:** Sono stati simulati più tentativi di autenticazione falliti verso lo stesso utente utilizzando password differenti.
 - Risultato atteso: Identificazione del comportamento anomalo e generazione di un alert.
 - Esito del test: Superato.
