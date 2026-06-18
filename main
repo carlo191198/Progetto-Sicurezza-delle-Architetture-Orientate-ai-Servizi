@@ -1,0 +1,228 @@
+#!/usr/bin/env python3
+"""
+Sistema di Autenticazione OAuth2 con Keycloak e Rilevamento Anomalie
+Progetto didattico - Sicurezza delle Architetture Orientate ai Servizi
+"""
+import urllib.request
+import urllib.parse
+import json
+import base64
+import time
+import logging
+from collections import defaultdict
+from dataclasses import dataclass, field
+from typing import Optional
+
+# ============================================================================
+# CONFIGURAZIONE
+# ============================================================================
+
+KEYCLOAK_URL = "http://localhost:8080"
+REALM = "security-demo"
+CLIENT_ID = "python-client"
+CLIENT_SECRET = "BcI2MpTs18FvRfDsxIlnGDkIXmJ9Aqx2"
+TOKEN_ENDPOINT = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
+
+# Soglie di rilevamento
+BRUTE_FORCE_THRESHOLD = 5   # Tentativi falliti per attivare alert
+TIME_WINDOW_SECONDS = 60    # Finestra temporale di osservazione
+
+# Configurazione logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-7s | %(message)s",
+    datefmt="%H:%M:%S"
+)
+log = logging.getLogger("SecurityMonitor")
+
+# ============================================================================
+# MODELLO DATI - Tentativo di Login
+# ============================================================================
+
+@dataclass
+class LoginAttempt:
+    """Rappresenta un singolo tentativo di autenticazione."""
+    username: str
+    ip_address: str
+    timestamp: float
+    success: bool
+    token_info: Optional[dict] = None
+
+# ============================================================================
+# SECURITY MONITORING MODULE - Registrazione e stato in memoria
+# ============================================================================
+
+@dataclass
+class SecurityMonitor:
+    """Monitora e registra tutti i tentativi di login."""
+    attempts: list = field(default_factory=list)
+    failures_by_ip: dict = field(default_factory=lambda: defaultdict(list))
+    failures_by_user: dict = field(default_factory=lambda: defaultdict(list))
+
+    def record(self, attempt: LoginAttempt):
+        """Registra un tentativo e aggiorna le strutture di tracciamento."""
+        self.attempts.append(attempt)
+        status = "✓ SUCCESS" if attempt.success else "✗ FAILED"
+        log.info(f"LOGIN {status} | User: {attempt.username} | IP: {attempt.ip_address}")
+
+        if not attempt.success:
+            self.failures_by_ip[attempt.ip_address].append(attempt.timestamp)
+            self.failures_by_user[attempt.username].append(attempt.timestamp)
+
+# ============================================================================
+# DETECTION ENGINE - Rilevamento anomalie in tempo reale
+# ============================================================================
+
+class DetectionEngine:
+    """Analizza i pattern di login per rilevare attacchi."""
+
+    def __init__(self, monitor: SecurityMonitor):
+        self.monitor = monitor
+
+    def _count_recent_failures(self, timestamps: list, window: int) -> int:
+        """Conta i fallimenti nella finestra temporale specificata."""
+        cutoff = time.time() - window
+        return sum(1 for ts in timestamps if ts > cutoff)
+
+    def check_brute_force_by_ip(self, ip: str) -> bool:
+        """Rileva brute force: >5 fallimenti dallo stesso IP in 60 secondi."""
+        count = self._count_recent_failures(
+            self.monitor.failures_by_ip[ip], TIME_WINDOW_SECONDS
+        )
+        if count >= BRUTE_FORCE_THRESHOLD:
+            self._alert(f"🚨 BRUTE FORCE DETECTED | IP: {ip} | {count} tentativi in {TIME_WINDOW_SECONDS}s")
+            return True
+        return False
+
+    def check_account_attack(self, username: str) -> bool:
+        """Rileva attacco su account: >5 fallimenti sullo stesso utente."""
+        count = self._count_recent_failures(
+            self.monitor.failures_by_user[username], TIME_WINDOW_SECONDS
+        )
+        if count >= BRUTE_FORCE_THRESHOLD:
+            self._alert(f"🚨 ACCOUNT ATTACK DETECTED | User: {username} | {count} tentativi in {TIME_WINDOW_SECONDS}s")
+            return True
+        return False
+
+    def analyze(self, attempt: LoginAttempt):
+        """Esegue tutte le analisi di sicurezza su un tentativo."""
+        if not attempt.success:
+            self.check_brute_force_by_ip(attempt.ip_address)
+            self.check_account_attack(attempt.username)
+
+    def _alert(self, message: str):
+        """Sistema di alert - output immediato su console."""
+        log.warning(message)
+
+# ============================================================================
+# OAUTH2 CLIENT - Comunicazione con Keycloak
+# ============================================================================
+
+def decode_jwt_payload(token: str) -> dict:
+    """Decodifica il payload di un JWT."""
+    parts = token.split(".")
+    if len(parts) != 3:
+        return {}
+    payload = parts[1]
+    # Aggiunge padding per base64
+    payload += "=" * (4 - len(payload) % 4)
+    decoded = base64.urlsafe_b64decode(payload)
+    return json.loads(decoded)
+
+def oauth2_login(username: str, password: str) -> tuple[bool, Optional[dict]]:
+    """
+    Effettua login OAuth2 verso Keycloak usando Resource Owner Password Grant.
+    Restituisce (success, token_info).
+    """
+    data = urllib.parse.urlencode({
+        "grant_type": "password",
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "username": username,
+        "password": password,
+    }).encode("utf-8")
+
+    request = urllib.request.Request(
+        TOKEN_ENDPOINT,
+        data=data,
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            token_response = json.loads(response.read().decode())
+            token_info = decode_jwt_payload(token_response.get("access_token", ""))
+            return True, token_info
+    except urllib.error.HTTPError:
+        return False, None
+    except Exception as e:
+        log.error(f"Errore di connessione: {e}")
+        return False, None
+
+# ============================================================================
+# SIMULAZIONE - Test del sistema
+# ============================================================================
+
+def simulate_login(monitor: SecurityMonitor, detector: DetectionEngine,
+                   username: str, password: str, ip: str):
+    """Simula un tentativo di login e attiva il monitoraggio."""
+    success, token_info = oauth2_login(username, password)
+    
+    attempt = LoginAttempt(
+        username=username,
+        ip_address=ip,
+        timestamp=time.time(),
+        success=success,
+        token_info=token_info
+    )
+    
+    monitor.record(attempt)
+    detector.analyze(attempt)
+    
+    if success and token_info:
+        log.info(f"   → Token subject: {token_info.get('sub', 'N/A')}")
+        log.info(f"   → Token expires: {token_info.get('exp', 'N/A')}")
+
+def run_simulation():
+    """Esegue una simulazione completa del sistema."""
+    monitor = SecurityMonitor()
+    detector = DetectionEngine(monitor)
+
+    print("\n" + "=" * 60)
+    print("   SIMULAZIONE SISTEMA DI SICUREZZA OAUTH2 + KEYCLOAK")
+    print("=" * 60 + "\n")
+
+    # Scenario 1: Login legittimo
+    log.info("\n--- Scenario 1: Login legittimo ---")
+    simulate_login(monitor, detector, "testuser", "password123", "192.168.1.10")
+    time.sleep(0.3)
+
+    # Scenario 2: Brute force da singolo IP
+    log.info("\n--- Scenario 2: Brute force da IP malevolo ---")
+    attacker_ip = "10.0.0.99"
+    for i in range(6):
+        simulate_login(monitor, detector, f"user{i}", "wrongpass", attacker_ip)
+        time.sleep(0.1)
+
+    # Scenario 3: Attacco su singolo account
+    log.info("\n--- Scenario 3: Attacco mirato su account ---")
+    for i in range(6):
+        simulate_login(monitor, detector, "testuser", f"guess{i}", f"192.168.1.{20+i}")
+        time.sleep(0.1)
+
+    # Riepilogo finale
+    print("\n" + "=" * 60)
+    print("   RIEPILOGO")
+    print("=" * 60)
+    total = len(monitor.attempts)
+    success = sum(1 for a in monitor.attempts if a.success)
+    print(f"   Tentativi totali: {total}")
+    print(f"   Successi: {success} | Fallimenti: {total - success}")
+    print("=" * 60 + "\n")
+
+# ============================================================================
+# ENTRY POINT
+# ============================================================================
+
+if __name__ == "__main__":
+    run_simulation()
