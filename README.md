@@ -39,7 +39,7 @@ L'architettura del mio progetto è composta essenzialmente da due componenti pri
 - Verifica delle credenziali;
 - Generazione dei token JWT.
 
-**- Python:** Tramite un editor di codice sorgente (Visual Studio Code), con Python mi è stato possibile: 
+**- Python:** Tramite un editor di codice sorgente (Visual Studio Code), con Python è stato possibile: 
 - Inviare richieste di autenticazione a Keycloak tramite OAuth2;
 - Registrare tutti i tentativi di accesso;
 - Distinguere le autenticazioni effettuate con successo da quelle fallite;
