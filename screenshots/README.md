@@ -1,1 +1,3 @@
-Nella foto 1 possiamo vedere....
+**Spiegazione degli screenshot**
+
+**1. Screenshot: docker compose 
