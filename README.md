@@ -10,16 +10,16 @@ In particolare, il sistema simula diversi scenari di autenticazione (legittimi e
 - Prima di eseguire il progetto è necessario aver installato Python e Docker Desktop.
 
 - All'interno della cartella del progetto è presente il file: "docker-compose.yml".
-Per avviare Keycloak eseguire nel terminale il comando: "docker compose up -d" e successivamente, cercare su un browser qualsiasi l'indirizzo
+Per avviare Keycloak, eseguire nel terminale il comando: "docker compose up -d" e successivamente, cercare su un browser qualsiasi l'indirizzo
 "http://localhost:8080". 
 
-- In questo momento bisogna configurare Keycloak, pertanto bisogna accedere alla Administration Console con le credenziali configurate nel Docker, ovvero: 
+- In questo momento bisogna configurare Keycloak, pertanto bisogna accedere alla Administration Console con le credenziali configurate nel Docker, ovvero nel nostro caso: 
 Username: admin / Password: admin .
 Dopodiché bisogna creare il Realm denominato "security-demo". Successivamente occore configurare un Client OAuth2 chiamato "python-client", abilitando le opzioni "Client Authentication" e "Direct Access Grants", le quali risultano essere necessarie per consentire all'app di Python di effettuare richieste di autenticazione verso il server. 
 Una volta terminata la configurazione del client, bisogna creare un utente di test (testuser) ed assegnarli una password permanente, che verrà utilizzata durante le simulazioni delle autenticazioni (nel mio caso username: testuser, password: password123).
 Il valore presente nella voce "Client Secret" (generato da Keycloak) deve essere copiato all'interno del file "main.py", sostituendo il valore della costante "CLIENT_SECRET". 
 
-**4-** Una volta completate tutte le operazioni indicate precedentemente, è possibile eseguire il progetto direttamente su un editor di codice sorgente (Visual Studio Code nel mio caso).
+**4-** Una volta completate tutte le operazioni indicate precedentemente, è possibile eseguire il progetto direttamente su un editor di codice sorgente (nel mio caso Visual Studio Code).
   
 **3- DIPENDENZE:**
 In questo progetto sono state utilizzate le seguenti tecnologie:
@@ -29,10 +29,20 @@ In questo progetto sono state utilizzate le seguenti tecnologie:
 - OAuth2;
 - JWT (JSON Web Token).
 
-Inoltre, sono state utilizzate esclusivamente librerie Python standard, quindi non è necessario installare ulteriori pacchetti aggiuntivi tramite pip. 
+Inoltre, sono state utilizzate esclusivamente librerie Python standard, quindi non è necessario installare ulteriori pacchetti aggiuntivi tramite pip.
+Le librerie utilizzate nel progetto sono: 
+- urllib.request: utilizzata per inviare le richieste HTTP verso Keycloak;
+- urllib.parse: utilizzata per codificare i dati di OAuth2; 
+- json: utilizzata per leggere le risposte in formato JSON da parte di Keycloak;
+- base64: utilizzata per decodificare i payload dei token JWT; 
+- time: utilizzata per salvare i timestap dei tentativi, misurare la finestra temporale (nel mio caso di 60 secondi) e simulare i ritardi;
+- logging: utilizzata per stampare i messaggi strutturati; 
+- collections.defaultdict: utilizzata per creare automaticamente le liste dei tentativi di accesso falliti; 
+- dataclasses: utilizzata per creare in maniera facile le varie classi utilizzate; 
+- typing.optional: utilizzata per indicare che i token possono contenere un dizionare o essere "None". 
 
 **4- ARCHITETTURA:**
-L'architettura del mio progetto è composta essenzialmente da due componenti principali:
+L'architettura del progetto è composta essenzialmente da due componenti principali:
 
 **- Keycloak:** Keycloak svolge il ruolo di Authorization Server ed Identity Provider, pertanto le sue funzioni principali sono: 
 - Gestione degli utenti;
