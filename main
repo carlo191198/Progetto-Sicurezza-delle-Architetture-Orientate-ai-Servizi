@@ -90,7 +90,7 @@ class DetectionEngine:
             self.monitor.failures_by_user[username], TIME_WINDOW_SECONDS
         )
         if count >= BRUTE_FORCE_THRESHOLD:
-            self._alert(f"🚨 ATTACCO BRUTE FORCE RILEVATO 🚨| Utente: {username} | {count} tentativi in {TIME_WINDOW_SECONDS}s")
+            self._alert(f"🚨 ATTACCO SU ACCOUNT RILEVATO 🚨| Utente: {username} | {count} tentativi in {TIME_WINDOW_SECONDS}s")
             return True
         return False
 
